@@ -1,11 +1,10 @@
-import '../polyfills/raf';
-import '../polyfills/performance';
 import h from '../h';
+import Polyfill from '../polyfills/polyfill';
 
 class Tweener {
   constructor() { this._vars(); return this; }
-  
-  _vars () { this.tweens = []; this._loop = this._loop.bind(this); }
+
+  _vars () { this.tweens = []; this._loop = this._loop.bind(this); this._p = new Polyfill(); }
   /*
     Main animation loop. Should have only one concurrent loop.
     @private
@@ -13,9 +12,9 @@ class Tweener {
   */
   _loop() {
     if (!this._isRunning) { return false; }
-    this._update(window.performance.now());
+    this._update(this._p.window.performance.now());
     if (!this.tweens.length) { return this._isRunning = false; }
-    requestAnimationFrame(this._loop);
+    this._p.window.requestAnimationFrame(this._loop);
     return this;
   }
   /*
@@ -24,7 +23,7 @@ class Tweener {
   */
   _startLoop() {
     if (this._isRunning) { return; }; this._isRunning = true
-    requestAnimationFrame(this._loop);
+    this._p.window.requestAnimationFrame(this._loop);
   }
   /*
     Method to stop animation loop.
@@ -82,6 +81,6 @@ class Tweener {
     }
   }
 }
-  
+
 var t = new Tweener
 export default t;

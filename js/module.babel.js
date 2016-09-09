@@ -1,10 +1,12 @@
 import h from './h';
+import Polyfill from './polyfills/polyfill';
 
 /*
   Base class for module. Extends and parses defaults.
 */
 class Module {
   constructor ( o = {} ) {
+    this._p = new Polyfill();
     this._o     = o;
     this._index = this._o.index || 0;
     // map of props that should be
@@ -91,12 +93,12 @@ class Module {
   */
   _hide () {
     if ( !this.el ) { return; }
-    
+
     if ( this._props.isSoftHide ) {
       this.el.style.opacity = 0;
       h.setPrefixedStyle( this.el, 'transform', 'scale(0)' );
     } else { this.el.style.display = 'none'; }
-    
+
     this._isShown = false;
   }
   /*
@@ -358,7 +360,7 @@ class Module {
         var currentValue = ( !isCurve )
           ? value.start.value + ep*value.delta
           : value.curve(p) * ( value.start.value + p * value.delta );
-        
+
         this._props[key] = `${currentValue}${value.end.unit}`;
 
       } else if ( value.type === 'color' ) {
